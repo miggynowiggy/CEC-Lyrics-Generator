@@ -43,7 +43,7 @@
 
       <v-layout row align-baseline justify-center mt-5>
         <v-flex xs6>
-          <v-btn color="secondary" :disabled="songList.length <= 0">
+          <v-btn color="secondary darken-2" :disabled="songList.length <= 0">
             <div>GENERATE LYRICS LIST</div>
             <v-icon right>save_alt</v-icon>
           </v-btn>
