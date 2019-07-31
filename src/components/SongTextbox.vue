@@ -3,7 +3,7 @@
         <v-flex xs5>
             <v-text-field
                 v-model="song"
-                label="Song #1"
+                :label="textboxLabel"
                 placeholder="Enter the title or artist of the desired song."
                 outlined
                 rounded
@@ -11,12 +11,12 @@
             ></v-text-field>
         </v-flex>
         <v-flex xs1 align-content-center>
-            <v-btn outlined color="primary">
+            <v-btn outlined color="primary" @click="removeSong(song)">
                 <v-icon medium>close</v-icon>
             </v-btn>
         </v-flex>
         <v-flex xs1 align-content-center>
-            <v-btn flat color="primary">
+            <v-btn color="primary" @click="addSong(song)">
                 <v-icon medium>done_outline</v-icon>
             </v-btn>
         </v-flex>
@@ -26,9 +26,28 @@
 <script>
 export default {
     name: "SongTextbox",
+    props: ["songNumber"],
     data() {
         return {
             song: "",
+        }
+    },
+
+    computed: {
+        textboxLabel() {
+            return "Song #" + this.songNumber;
+        }
+    },
+
+    methods: {
+        addSong(song) {
+            this.$store.commit('PUSH_SONG_TO_LIST', song);
+        },
+        addFields() {
+            this.$store.commit('INCREMENT_FIELD_COUNT');
+        },
+        removeSong(song) {
+            this.$store.commit('DECREMENT_FIELD_COUNT');
         }
     },
 }

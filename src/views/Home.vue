@@ -14,8 +14,8 @@
         </div>
       </v-layout>
 
-      <v-layout row>
-        <SongTextbox/>
+      <v-layout row v-for="n in numOfSongs" :key="n">
+        <SongTextbox :songNumber="n"/>
       </v-layout>
 
       <v-layout row align-baseline justify-center mt-5>
@@ -26,7 +26,7 @@
           </v-btn>
         </v-flex>
         <v-flex xs3>
-          <v-btn color="primary">
+          <v-btn color="primary" @click="addFields">
             <div>ADD A SONG</div>
             <v-icon right>add_circle_outline</v-icon>
           </v-btn>
@@ -45,6 +45,20 @@ export default {
   name: "home",
   components: {
     SongTextbox,
-  }
+  },
+  computed: {
+    numOfSongs() {
+      let numberOfSongs = this.$store.getters.GET_SONGS_ON_LIST;
+      return numberOfSongs.length + 1;
+    }
+  },
+  methods: {
+    addSong(song) {
+      this.$store.commit('PUSH_SONG_TO_LIST', song);
+    },
+    addFields() {
+      this.$store.commit('INCREMENT_FIELD_COUNT');
+    }
+  },
 };
 </script>
