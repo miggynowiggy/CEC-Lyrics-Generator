@@ -26,7 +26,7 @@
 <script>
 export default {
     name: "SongTextbox",
-    props: ["songNumber"],
+    props: ["songNumber", "song"],
     data() {
         return {
             song: "",
@@ -47,7 +47,7 @@ export default {
             this.$store.commit('INCREMENT_FIELD_COUNT');
         },
         removeSong(song) {
-            this.$store.commit('DECREMENT_FIELD_COUNT');
+            this.$store.commit('REMOVE_SONG_FROM_LIST', song);
         }
     },
 }
