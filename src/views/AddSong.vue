@@ -140,7 +140,7 @@ export default {
 		}
 	},
 	computed: {
-		SongPart() {
+		SongPartHeader() {
 			if(this.songPart === "Verse") {
 				return this.songPart + " " + this.songPartNumber;
 			}
@@ -162,7 +162,7 @@ export default {
 		},
 		addLyricsPart() {
 			const lyric = {
-				songPart: this.SongPart,
+				songPart: this.SongPartHeader,
 				songPartNumber: this.songPartNumber,
 				songPartText: this.songPartText 
 			};
