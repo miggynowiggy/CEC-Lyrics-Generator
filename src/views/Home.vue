@@ -27,7 +27,7 @@
       <v-layout row align-baseline justify-center mt-4>
         <v-flex xs4>
           <v-text-field
-            v-model="song"
+            v-model="search"
             placeholder="Enter the title or artist of the desired song."
             outlined
             rounded
@@ -50,6 +50,20 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-container align-center justify-center>
+      <v-layout row align-center justify-center>
+        <v-card>
+          <v-card-title>
+            <div class="headline font-weight-bold">Search results for {{ search }}</div>
+          </v-card-title>
+
+          <v-card-text>
+            {{ searchResults }}
+          </v-card-text>
+        </v-card>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -67,7 +81,8 @@ export default {
   },
   data() {
     return {
-      song: ""
+      song: "",
+      search: ""
     }
   },
   computed: {
@@ -81,6 +96,9 @@ export default {
     isSongListEmpty() {
       if(this.songList.length <= 0) return true;
       else return false;
+    },
+    filteredList() {
+
     },
   },
   methods: {
