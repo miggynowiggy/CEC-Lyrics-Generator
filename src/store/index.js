@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { DB } from "@/config/firebase";
 
 Vue.use(Vuex);
 
@@ -29,5 +30,19 @@ export default new Vuex.Store({
       state.fieldCount -= 1;
     }
   },
-  actions: {}
+  actions: {
+    async Add_Song_To_Database(payload) {
+      try {
+        console.log(payload);
+        await DB.collection("songs")
+          .doc()
+          .set(payload)
+          .then(() => {
+            console.log(payload.title + "has been added!");
+          });
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
 });
