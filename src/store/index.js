@@ -7,13 +7,18 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     songs: [],
-    fieldCount: 0
+    fieldCount: 0,
+    songsFromDatabase: []
   },
   getters: {
     GET_SONG_LIST: state => state.songs,
+    GET_ALL_SONGS: state => state.songsFromDatabase,
     GET_FIELD_NUMS: state => state.fieldCount
   },
   mutations: {
+    ADD_SONGS_FROM_DB(state, payload) {
+      state.songsFromDatabase.push(payload);
+    },
     PUSH_SONG_TO_LIST(state, payload) {
       state.songs.push(payload);
     },
@@ -43,6 +48,14 @@ export default new Vuex.Store({
       } catch (error) {
         throw error;
       }
+    },
+    async Get_All_Songs({ commit }) {
+      let songQuerySnapshot = await DB.collection("songs").get();
+      songQuerySnapshot.forEach(doc => {
+        let song = doc.data();
+        song.id = doc.id;
+        commit("ADD_SONGS_FROM_DB", song);
+      });
     }
   }
 });
