@@ -17,6 +17,21 @@
   </v-app>
 </template>
 
+<script>
+export default {
+  name: "Home",
+  data() {
+    return {
+      
+    }
+  },
+  mounted() {
+    this.$store.dispatch("Get_All_Songs");
+    console.log(this.$store.getters.GET_ALL_SONGS);
+  }
+}
+</script>
+
 <style>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
