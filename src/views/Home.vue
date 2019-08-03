@@ -1,19 +1,6 @@
 <template>
   <div class="home">
     <v-container>
-      
-      <v-layout row>
-        <v-flex xs12>
-          <h1 class="primary--text font-weight-bold">LYRICS GENERATOR</h1>
-        </v-flex>
-      </v-layout>
-      
-      <v-layout row align-center justify-center mb-5>
-        <div class="body-1 font-italic">
-          For instructions, please see <b>"Instructions"</b> tab.
-        </div>
-      </v-layout>
-
       <v-layout row v-if="isSongListEmpty" justify-center align-center mt-5 mb-5>
         <div class="primary--text headline">NO SONGS YET!!</div>
       </v-layout>
