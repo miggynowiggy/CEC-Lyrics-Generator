@@ -38,12 +38,21 @@
 									>
 									</v-select>
 								</v-flex>
-								<v-flex xs3 offset-xs1 v-show="lyric.songPart >= 'Verse' | lyric.songPart >= 'Chorus'">
+								<v-flex xs3 offset-xs1 v-if="lyric.songPart === 'Verse' || lyric.songPart === 'Chorus'">
 									<v-text-field
 										v-model="lyric.songPartNumber"
 										outlined
 										:label= "lyric.songPart + ' Number?'"
 										:hint="'If song only contains one ' + lyric.songPart + ', leave this blank'"
+									>
+									</v-text-field>
+								</v-flex>
+								<v-flex xs3 offset-xs1 v-else-if="lyric.songPart === 'Others'">
+									<v-text-field
+										v-model="lyric.customSongPart"
+										outlined
+										label= "Custom Song Part"
+										hint="E.g: 'To Chorus' or 'To Coda or Verse'"
 									>
 									</v-text-field>
 								</v-flex>
@@ -63,9 +72,9 @@
 
 					<v-card-actions right>
 						<v-spacer/>
-						<v-btn @click="addLyricsPart">ADD SONG PART</v-btn>
 						<v-btn @click="resetForm">RESET FORM</v-btn>
-						<v-btn type="submit">ADD SONG</v-btn>
+						<v-btn @click="addLyricsPart" color="secondary">ADD SONG PART</v-btn>
+						<v-btn type="submit" :loading="saveLoading" color="primary">ADD SONG</v-btn>
 					</v-card-actions>
 				</v-form>
 			</v-card>
@@ -91,13 +100,17 @@
 						<div class="headline primary--text font-weight-bold">SONG ARTIST: </div>
 					</v-flex> 
 					<v-flex xs12>
+						<span v-if="artist === ''" class="body-1 secondary--text"> NONE </span> 
 						<span class="body-1 secondary--text"> {{ artist }}</span> 
 					</v-flex>
 				</v-layout>
 				
 				<v-layout row wrap v-for="lyric in lyrics" :key="lyric.songPartText" pa-4>
-					<v-flex xs12>
+					<v-flex xs12 v-if="lyric.songPart !== 'Others'">
 						<div class="subheading font-weight-bold font-italic">{{ lyric.songPart }} {{ lyric.songPartNumber }}</div>
+					</v-flex>
+					<v-flex xs12 v-else>
+						<div class="subheading font-weight-bold font-italic">{{ lyric.customSongPart }}</div>
 					</v-flex>
 					<v-flex xs12>
 						<div class="body-1">{{ lyric.songPartText }}</div>
@@ -110,6 +123,7 @@
 </template>
 
 <script>
+import { DB } from "@/config/firebase";
 export default {
 	name: "AddSong", 
 	data() {
@@ -117,44 +131,67 @@ export default {
 			title: "",
 			artist: "",
 			lyrics: [{}],
-			songPartList: [ "Verse", "Chorus", "Bridge", "Coda" ],
+			songPartList: ["Verse", "Chorus", "Bridge", "Coda", "End", "Others"],
 			songPart: "",
+			customSongPart: "",
 			songPartNumber: "",
 			songPartText: "",
-			verseCounter: 0,
-			chorusCounter: 0,
+			saveLoading: false,
 		}
 	},
 	computed: {
-
+		SongPart() {
+			if(this.songPart === "Verse") {
+				return this.songPart + " " + this.songPartNumber;
+			}
+			else if(this.songPart === "Chorus") {
+				return this.songPart + " " + this.songPartNumber;
+			}
+			else if(this.songPart === "Others") {
+				return this.customSongPart
+			}
+			else {
+				return this.songPart;
+			}
+		}
 	},
 	methods: {
 		resetForm() {
 			this.$refs.form.reset();
 			this.lyrics = [{}];
 		},
-		checkPartAdded() {
-			if(this.songPart === "Verse") this.songPart = `${this.songPart} ${this.songPartNumber}`;
-			else if(this.songPart === "Chorus") this.songPart = `${this.songPart} ${this.songPartNumber}`;
-		},
 		addLyricsPart() {
-			const lyrics = {
-				songPart: `${this.songPart} ${this.songPartNumber}`,
+			const lyric = {
+				songPart: this.SongPart,
 				songPartNumber: this.songPartNumber,
 				songPartText: this.songPartText 
 			};
-			this.lyrics.push(lyrics);
-			console.log(this.lyrics);
+			this.lyrics.push(lyric);
 		},
-		submitSong() {
-			const song = {
+		async submitSong() {
+			this.saveLoading = true;
+			let song = {
 				title: this.title,
 				artist: this.artist,
 				lyrics: this.lyrics
 			};
-			this.$swal.fire('success', `${song.title} has been added successfully!`, 'success');
-			console.log(song);
+			if(this.artist === "" || this.artist === null || this.artist === undefined) {
+				song.artist = null;
+			}
+
+			try {
+				await DB.collection("songs")
+				.doc()
+				.set(song);
+				this.$swal.fire('success', `${song.title} has been added successfully!`, 'success');
+			}
+			catch(error) {
+				this.$swal.fire('Error', `${error.message}`, 'error');	
+				this.saveLoading = false;
+			}
+
 			this.resetForm();
+			this.saveLoading = false;
 		}
 	},
 }

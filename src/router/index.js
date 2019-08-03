@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "@/views/Home.vue";
 import Instructions from "@/views/Instructions.vue";
 import AddSong from "@/views/AddSong.vue";
+import AddSong2 from "@/views/AddSong2.vue";
 
 Vue.use(Router);
 
