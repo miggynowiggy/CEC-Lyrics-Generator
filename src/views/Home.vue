@@ -187,10 +187,10 @@ export default {
           
           let lyricPartHeader = "";
           if(songLyrics.songPartNumber === undefined || songLyrics.songPartNumber === "") {
-            lyricPartHeader = songLyrics.songPart.charAt(0) + ") ";
+            lyricPartHeader = songLyrics.songPart + ") ";
           }
           else {
-            lyricPartHeader = songLyrics.songPart.charAt(0) + songLyrics.songPartNumber + ") ";
+            lyricPartHeader = songLyrics.songPart + songLyrics.songPartNumber + ") ";
           }
           let lyricPartText = songLyrics.songPartText;
 
