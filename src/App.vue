@@ -2,8 +2,15 @@
   <v-app>
     <div id="app">
       <div id="nav">
+        <v-layout row align-center justify-center mt-3 mb-5>
+          <v-flex xs12>
+            <h1 class="primary--text font-weight-bold">CEC LYRICS GENERATOR</h1>
+          </v-flex>
+        </v-layout>
+
         <router-link to="/">Home</router-link> |
-        <router-link to="/instructions">Instructions</router-link>
+        <router-link to="/instructions">Instructions</router-link> | 
+        <router-link to="/addSong">Add Song to Database</router-link>
       </div>
       <router-view />
     </div>
