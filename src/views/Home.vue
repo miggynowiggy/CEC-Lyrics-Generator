@@ -12,7 +12,7 @@
       </v-layout>
 
       <v-layout row align-baseline justify-center mt-5 mb-5>
-        <v-flex xs3>
+        <v-flex xs10>
           <v-btn color="secondary darken-2" :disabled="songList.length <= 0" @click="generateLyrics">
             <div>GENERATE LYRICS LIST</div>
             <v-icon right>save_alt</v-icon>
@@ -21,14 +21,14 @@
       </v-layout>
 
       <v-layout row align-baseline justify-center mt-5>
-        <v-flex xs4>
-          <!--<v-autocomplete
-            v-model="song"
+        <v-flex xs6>
+          <v-autocomplete
+            v-model="selectedSong"
             :loading="loading"
             :items="songsFromDB"
             :filter="customFilter"
             :item-text="title"
-            :item-value="id"
+            :item-value="item"
             item-color="primary"
             cache-items
             hide-details
@@ -39,54 +39,42 @@
             placeholder="Enter the title or artist of the desired song."
             outlined
             rounded
-          ></v-autocomplete>-->
-          <v-text-field
+            @input="openPreview"
+          ></v-autocomplete>
+          <!--<v-text-field
             outlined
             v-model="search"
             rounded
             label="Song"
             placeholder="Type in the Title or the Artist of your desired song..."
-          ></v-text-field>
+          ></v-text-field>-->
         </v-flex>
       </v-layout>
     </v-container>
 
     <v-container>
       <v-layout row align-center justify-center>
-        <v-card
-          width="500px"
-          max-height="600px"
-        >
-          <v-card-title>
-            <div class="secondary--text subheading">
-              Search Results for: <span class="secondary--text font-weight-bold">{{ search }}</span>
-            </div>
-          </v-card-title>
-          <v-divider/>
-          <v-card-text>
-            <v-list two-line dense>
-              <v-list-item
-                v-for="song in filteredList"
-                :key="song.id"
-              >
-                <v-list-item-content>
-                  <v-list-item-title v-text="song.title + ' - ' + song.artist" @click="openPreview(song)"></v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-layout>
-
-      <v-layout row align-center justify-center>
         <v-dialog
           v-model="dialog"
           scrollable
-          max-width="450px"
+          max-width="400px"
         >
           <v-card class="pa-3">
-            <v-card-title class="font-weight-bold primary--text">{{ selectedSong.title }}</v-card-title>
+            <v-card-title>
+              <v-layout row wrap justify-center align-center>
+                <v-flex xs12 class="font-weight-bold headline primary--text justify-center">
+                  {{ selectedSong.title }}
+                </v-flex>
+
+                <v-flex xs12 class="font-weight-bold subtitle-1 secondary--text justify-center">
+                  <div v-if="selectedSong.artist">By: {{ selectedSong.artist }}</div>
+                  <div v-else>By: UNKNOWN</div>    
+                </v-flex>
+              </v-layout>
+            </v-card-title>
+          
             <v-divider/>
+            
             <v-card-text>
               <v-layout 
                 row
@@ -95,7 +83,7 @@
                 justify-center 
                 v-for="lyrics in selectedSong.lyrics" 
                 :key="lyrics.songPart"
-                mt-2
+                mb-3
               >
                 <v-flex xs12>
                   <div class="font-weight-bold font-italic">{{ lyrics.songPart }} {{ lyrics.songPartNumber }}</div>
@@ -145,7 +133,12 @@ export default {
   computed: {
     songsFromDB() {
       let songs = this.$store.getters.GET_ALL_SONGS; 
-      return songs; 
+      return songs.map((song) => {
+        return {
+          text: song.title,
+          value: song
+        };
+      }); 
     },
     numOfSongs() {
       let numberOfSongs = this.$store.getters.GET_SONG_LIST;
@@ -222,6 +215,7 @@ export default {
     customFilter (item, queryText, itemText) {
       return queryText.toUpperCase().length > 1 
         && itemText.toUpperCase().indexOf(queryText.toUpperCase()) > -1;
+      //return this.item.filter((song) => {return boolean})
     },
     openPreview(song) {
       this.dialog = true;

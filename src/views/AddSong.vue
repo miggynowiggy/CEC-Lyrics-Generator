@@ -2,79 +2,101 @@
 	<div class="AddSong">
 		<v-layout row wrap align-center justify-center>
 			<v-card 
-				class="align-center justify-center"
-				width="1000px"
+				class="align-center justify-center pa-3"
+				width="450px"
 				outlined		
 			>
 				<v-card-title class="headline primary--text font-weight-bold justify-center">
 					ADD SONG
 				</v-card-title>
-
+				<v-layout row align-center justify-center mt-2>
+					<v-flex xs6>
+						<!--<v-btn color="primary" class="caption" @click="uploadDialog = !uploadDialog">
+							ADD SONG VIA TEXT FILE
+							<v-icon></v-icon>
+						</v-btn>-->
+					</v-flex>
+				</v-layout>
 				<v-form ref="form" @submit.prevent="submitSong">
 					<v-card-text>
-						<v-text-field
-								v-model="title"
-								label="Song Title"
-								placeholder="Enter complete title of the song..."
-								required
-							></v-text-field>
-							<v-text-field
-								v-model="artist"
-								label="Song Artist"
-								placeholder="Enter Song Artist..."
-								required
-							></v-text-field>
-
-							<v-divider/>
-
-							<v-layout row wrap align-center justify-center v-for="lyric in lyrics" :key="lyric" mt-5 pa-2>
-								<v-flex xs8>
-									<v-select
-										v-model="lyric.songPart"
-										label="Song Part?"
-										placeholder="Click to select song part..."
-										:items="songPartList"
-										outlined
-									>
-									</v-select>
-								</v-flex>
-								<v-flex xs3 offset-xs1 v-if="lyric.songPart === 'Verse' || lyric.songPart === 'Chorus'">
-									<v-text-field
-										v-model="lyric.songPartNumber"
-										outlined
-										:label= "lyric.songPart + ' Number?'"
-										:hint="'If song only contains one ' + lyric.songPart + ', leave this blank'"
-									>
-									</v-text-field>
-								</v-flex>
-								<v-flex xs3 offset-xs1 v-else-if="lyric.songPart === 'Others'">
-									<v-text-field
-										v-model="lyric.customSongPart"
-										outlined
-										label= "Custom Song Part"
-										hint="E.g: 'To Chorus' or 'To Coda or Verse'"
-									>
-									</v-text-field>
-								</v-flex>
-								
-								<v-flex xs12>
-									<v-textarea
-										v-model="lyric.songPartText"
-										outlined
-										label="Lyrics Part"
-										placeholder="Enter lyrics of the song part..."
-										required
-									></v-textarea>
-								</v-flex>
+						<v-layout row>
+							<v-flex xs12>
+								<v-text-field
+									v-model="title"
+									label="Song Title"
+									placeholder="Enter complete title of the song..."
+									required
+								></v-text-field>
+							</v-flex>
+						</v-layout>
+						
+						<v-layout row>
+							<v-flex xs12>
+								<v-text-field
+									v-model="artist"
+									label="Song Artist"
+									placeholder="Enter Song Artist..."
+									required
+								></v-text-field>
+							</v-flex>
+						</v-layout>
 							
-							</v-layout>
+						<v-divider/>
+
+						<v-layout row wrap align-center justify-center v-for="lyric in lyrics" :key="lyric" mt-5 pa-2>
+							<v-flex xs12>
+								<v-select
+									v-model="lyric.songPart"
+									label="Song Part?"
+									placeholder="Click to select song part..."
+									:items="songPartList"
+									outlined
+								>
+								</v-select>
+							</v-flex>
+							<v-flex xs12 mt-2 v-if="lyric.songPart === 'Verse' || lyric.songPart === 'Chorus'">
+								<v-text-field
+									v-model="lyric.songPartNumber"
+									outlined
+									:label= "lyric.songPart + ' Number?'"
+									:hint="'If song only contains one ' + lyric.songPart + ', leave this blank'"
+								>
+								</v-text-field>
+							</v-flex>
+							<v-flex xs12 mt-2 v-else-if="lyric.songPart === 'Others'">
+								<v-text-field
+									v-model="lyric.customSongPart"
+									outlined
+									label= "Custom Song Part"
+									hint="E.g: 'To Chorus' or 'To Coda or Verse'"
+								>
+								</v-text-field>
+							</v-flex>
+							
+							<v-flex xs12 mt-2>
+								<v-textarea
+									v-model="lyric.songPartText"
+									outlined
+									label="Lyrics Part"
+									placeholder="Enter lyrics of the song part..."
+									required
+								></v-textarea>
+							</v-flex>
+						</v-layout>
 					</v-card-text>
 
-					<v-card-actions right>
-						<v-spacer/>
-						<v-btn @click="resetForm">RESET FORM</v-btn>
-						<v-btn @click="addLyricsPart" color="secondary">ADD SONG PART</v-btn>
-						<v-btn type="submit" :loading="saveLoading" color="primary">ADD SONG</v-btn>
+					<v-card-actions>
+						<v-layout row wrap align-center justify-center>
+							<v-flex xs4>
+								<v-btn @click="resetForm" class="caption">RESET FORM</v-btn>
+							</v-flex>
+							<v-flex xs4>
+								<v-btn @click="addLyricsPart" color="secondary" class="caption">ADD SONG PART</v-btn>
+							</v-flex>
+							<v-flex xs4>
+								<v-btn type="submit" :loading="saveLoading" color="primary">ADD SONG</v-btn>
+							</v-flex>
+						</v-layout>
 					</v-card-actions>
 				</v-form>
 			</v-card>
@@ -83,10 +105,14 @@
 		<v-layout row mt-5 justify-center align-center>
 			<v-card
 				class="align-center justify-center pa-3"
-				width="500px"
+				width="450px"
 				outlined
 			>
 				<v-layout row wrap align-center justify-center mt-3>
+					<v-flex xs12 mb-3>
+						<div class="caption secondary--text font-italic">Real-time lyrics preview</div>
+						<v-divider/>
+					</v-flex> 
 					<v-flex xs12>
 						<div class="headline primary--text font-weight-bold">SONG TITLE: </div>
 					</v-flex> 
@@ -119,13 +145,64 @@
 
 			</v-card>
 		</v-layout>
+		
+		<v-layout row align-center justify-center>
+			<v-dialog
+				v-model="uploadDialog"
+				persistent
+				max-width="650px"
+			>
+				<v-card>
+					<v-card-title>
+						<v-layout row wrap justify-start align-center>
+							<v-flex xs6>
+								<div class="headline primary--text font-weight-bold">ADD SONG VIA TEXT FILE</div>
+							</v-flex>
+							<v-flex xs2 offset-xs1>
+								<v-btn outlined color="secondary" @click="uploadDialog = !uploadDialog">
+									CANCEL
+								</v-btn>
+							</v-flex>
+							<v-flex xs3>
+								<v-btn color="primary" @click="processFiles" :disabled="files.length <= 0">
+									UPLOAD FILES
+								</v-btn>
+							</v-flex>
+						</v-layout>
+					</v-card-title>
+
+					<v-card-text>
+						<v-layout row pa-3>
+							<v-flex xs12>
+								<vueDropzone 
+									ref="dropzone"
+									id="dropzone"
+									:options="dropzoneOptions"
+									duplicateCheck
+									@vdropzone-file-added="addFile"
+									@vdropzone-removed-file="removeFile"
+									@vdropzone-duplicate-file="duplicateError"
+									@vdropzone-error="errorInUpload"
+								/>-->
+							</v-flex>
+						</v-layout>
+					</v-card-text>
+				</v-card>
+			</v-dialog>
+		</v-layout>
 	</div>
 </template>
 
 <script>
 import { DB } from "@/config/firebase";
+import vue2Dropzone from "vue2-dropzone";
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
+
 export default {
 	name: "AddSong", 
+	components: {
+		 vueDropzone: vue2Dropzone,
+	},
 	data() {
 		return {
 			title: "",
@@ -137,6 +214,20 @@ export default {
 			songPartNumber: "",
 			songPartText: "",
 			saveLoading: false,
+			uploadDialog: false,
+			
+			files: [],
+			
+			//DropZone Component
+			dropzoneOptions: {
+				autoProcessQueue: false,
+				url: '/',
+				acceptedFiles: 'text/plain',
+				addRemoveLinks: true,
+				thumbnailWidth: 80,
+				thumbnailHeight: 80,
+				dictDefaultMessage: "Click this box or Drag File in this box to upload files..."
+			},
 		}
 	},
 	computed: {
@@ -192,6 +283,51 @@ export default {
 
 			this.resetForm();
 			this.saveLoading = false;
+		},
+		addFile(file) {
+			this.files.push(file);
+		},
+		duplicateError(file) {
+			this.$swal.fire("warning", `${file.name} already exist, please try again...`, "warning");
+			this.removeFile(file);
+		},
+		errorInUpload(file){
+			if(file.accepted === false) {
+        this.$swal.fire("error", `"${file.name}" is an invalid file. Please upload .txt files only.`, "error");
+      }
+      else this.$swal.fire("warning", "Error was encountered during the upload. Please try again.");
+      console.log(file.status);
+
+      this.$refs.dropzone.removeFile(file);
+		},
+		removeFile(file) {
+			let removedFile = file;
+			let removedFileIndex = this.files.findIndex((file) => file.name === removedFile.name);
+			this.files.splice(removedFileIndex,1);
+			console.log(this.files);
+		},
+		processFiles() {
+			//let file = this.$refs.upload.files[0];
+			// const file = evt.target.files[0];
+			// const reader = new FileReader();
+			
+			// reader.onload = (evt) => console.log(evt.target.result);
+			// reader.readAsText(file);
+			for(let i = 0; i != this.files.length; i++) {
+				const file = this.files[i];
+				const reader = new FileReader();
+				var output = "before";
+				
+				reader.onload = function(e) {
+					let output = e.target.result;
+					console.log(output);
+				}
+
+				reader.readAsText(file);
+				console.log(output);
+				
+			}
+			
 		}
 	},
 }
