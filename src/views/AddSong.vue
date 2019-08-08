@@ -11,10 +11,10 @@
 				</v-card-title>
 				<v-layout row align-center justify-center mt-2>
 					<v-flex xs6>
-						<!--<v-btn color="primary" class="caption" @click="uploadDialog = !uploadDialog">
+						<v-btn color="primary" class="caption" @click="uploadDialog = !uploadDialog">
 							ADD SONG VIA TEXT FILE
 							<v-icon></v-icon>
-						</v-btn>-->
+						</v-btn>
 					</v-flex>
 				</v-layout>
 				<v-form ref="form" @submit.prevent="submitSong">
@@ -164,7 +164,7 @@
 								</v-btn>
 							</v-flex>
 							<v-flex xs3>
-								<v-btn color="primary" @click="processFiles" :disabled="files.length <= 0">
+								<v-btn color="primary" @click="processFiles2" :disabled="files.length <= 0">
 									UPLOAD FILES
 								</v-btn>
 							</v-flex>
@@ -183,7 +183,7 @@
 									@vdropzone-removed-file="removeFile"
 									@vdropzone-duplicate-file="duplicateError"
 									@vdropzone-error="errorInUpload"
-								/>-->
+								/>
 							</v-flex>
 						</v-layout>
 					</v-card-text>
@@ -197,6 +197,7 @@
 import { DB } from "@/config/firebase";
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
+import { debuglog } from 'util';
 
 export default {
 	name: "AddSong", 
@@ -293,41 +294,144 @@ export default {
 		},
 		errorInUpload(file){
 			if(file.accepted === false) {
-        this.$swal.fire("error", `"${file.name}" is an invalid file. Please upload .txt files only.`, "error");
-      }
-      else this.$swal.fire("warning", "Error was encountered during the upload. Please try again.");
-      console.log(file.status);
+				this.$swal.fire("error", `"${file.name}" is an invalid file. Please upload .txt files only.`, "error");
+			}
+			else this.$swal.fire("warning", "Error was encountered during the upload. Please try again.");
+			console.log(file.status);
 
-      this.$refs.dropzone.removeFile(file);
+			this.$refs.dropzone.removeFile(file);
 		},
+
 		removeFile(file) {
 			let removedFile = file;
 			let removedFileIndex = this.files.findIndex((file) => file.name === removedFile.name);
 			this.files.splice(removedFileIndex,1);
 			console.log(this.files);
 		},
-		processFiles() {
-			//let file = this.$refs.upload.files[0];
-			// const file = evt.target.files[0];
-			// const reader = new FileReader();
-			
-			// reader.onload = (evt) => console.log(evt.target.result);
-			// reader.readAsText(file);
+		
+		processFiles2() {
 			for(let i = 0; i != this.files.length; i++) {
 				const file = this.files[i];
 				const reader = new FileReader();
-				var output = "before";
 				
-				reader.onload = function(e) {
-					let output = e.target.result;
-					console.log(output);
+				reader.onload = async () => {
+					
+					let txtContent = reader.result.split("\n");
+					const song = await this.extractDetails(txtContent);
+					console.log(song);
 				}
-
+				
 				reader.readAsText(file);
-				console.log(output);
+			}
+		}, 
+
+		extractDetails(arrayedTextFile) {
+			let song;
+
+			let extractedTitle = arrayedTextFile[0];
+			console.log(`TITLE: ${extractedTitle}`);
+
+			let extractedArtist = arrayedTextFile[1];
+			var startScanLine;
+
+			if(extractedArtist === "\r") {
+				extractedArtist = "UNKNOWN";
+				startScanLine = 2;
+			}
+			else {
+				extractedArtist = extractedArtist.replace("(", "").replace(")", "");
+				startScanLine = 3;
+			}
+			console.log(`ARTIST: ${extractedArtist}`);
+
+			let extractedLyrics = [];
+			let songPart = [];
+			let songPartTitle = "";
+			
+			for(let i = startScanLine; i < arrayedTextFile.length; i++) {
+				let line = arrayedTextFile[i];
+				
+				if(line === "\r") console.log("return tab");
+				else console.log(line); 
+				
+				let newLine;
+
+				if( !isNaN(line.charAt(0)) && line.charAt(1) === ")") {
+					//remove the part of verse song indicator e.g: 1), 2), etc)
+					songPartTitle = "VERSE " + line.charAt(0);
+					newLine = line.split(line.charAt(0) + ") ", 1);
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("V)")) {
+					songPartTitle = "VERSE";
+					newLine = line.replace("V) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("TALATA)")) {
+					songPartTitle = "TALATA";
+					newLine = line.replace("TALATA) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("C)" || "CHORUS)")) {
+					songPartTitle = "CHORUS";
+					newLine = line.replace("C) " || "CHORUS) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("KORO)")) {
+					songPartTitle = "KORO";
+					newLine = line.replace("KORO) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("BRIDGE)")) {
+					songPartTitle = "BRIDGE";
+					newLine = line.replace("BRIDGE) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("END)")) {
+					songPartTitle = "END";
+					newLine = line.replace("END) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("CODA)")) {
+					songPartTitle = "CODA";
+					newLine = line.replace("CODA) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line === "\r") {
+					//close current songPart and add to lyrics
+					extractedLyrics.push(
+						{
+							songPart: songPartTitle,
+							songPartNumber: null,
+							songPartText: songPart.join(''), 
+						}
+					);
+					songPart = [];
+					songPartTitle = "";
+				} 
+				else {
+					newLine = line;
+					songPart.push(line + "\n");
+
+					//if EOF already, close the loop
+					if(i === arrayedTextFile.length - 1) {
+						extractedLyrics.push(
+							{
+								songPart: songPartTitle,
+								songPartNumber: null,
+								songPartText: songPart.join(''), 
+							}
+						);
+					}
+				}
 				
 			}
-			
+
+			return song = {
+				title: extractedTitle,
+				artist: extractedArtist,
+				lyrics: extractedLyrics
+			};
 		}
 	},
 }
