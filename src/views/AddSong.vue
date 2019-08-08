@@ -164,7 +164,11 @@
 								</v-btn>
 							</v-flex>
 							<v-flex xs3>
-								<v-btn color="primary" @click="processFiles2" :disabled="files.length <= 0">
+								<v-btn color="primary" 
+									@click="processFiles2" 
+									:loading="uploadLoading" 
+									:disabled="files.length <= 0 || uploadLoading"
+								>
 									UPLOAD FILES
 								</v-btn>
 							</v-flex>
@@ -215,6 +219,7 @@ export default {
 			songPartNumber: "",
 			songPartText: "",
 			saveLoading: false,
+			uploadLoading: false,
 			uploadDialog: false,
 			
 			files: [],
@@ -309,8 +314,12 @@ export default {
 			console.log(this.files);
 		},
 		
-		processFiles2() {
+		async processFiles2() {
+			this.uploadLoading = true;
+			var txtFilesNotUploaded = 0;
+
 			for(let i = 0; i != this.files.length; i++) {
+				this.$swal.fire('warning', `Processing ${i + 1} of ${this.files.length} files. Please dont close the browser...`, 'warning');
 				const file = this.files[i];
 				const reader = new FileReader();
 				
@@ -319,10 +328,24 @@ export default {
 					let txtContent = reader.result.split("\n");
 					const song = await this.extractDetails(txtContent);
 					console.log(song);
+
+					try {
+						await DB.collection("songs")
+						.doc()
+						.set(song);
+					}
+					catch(error) {
+						txtFilesNotUploaded++;
+					}
 				}
-				
 				reader.readAsText(file);
 			}
+
+			if(txtFilesNotUploaded > 0) {
+				this.$swal.fire('warning', `There were ${txtFilesNotUploaded} songs not added due to error... Please try again`, 'warning');
+			}
+			else this.$swal.fire('success', `${this.files.length} songs has been added successfully!`, 'success');
+			this.uploadLoading = false;
 		}, 
 
 		extractDetails(arrayedTextFile) {
