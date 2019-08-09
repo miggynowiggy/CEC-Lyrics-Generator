@@ -318,34 +318,54 @@ export default {
 			this.uploadLoading = true;
 			var txtFilesNotUploaded = 0;
 
-			for(let i = 0; i != this.files.length; i++) {
-				this.$swal.fire('warning', `Processing ${i + 1} of ${this.files.length} files. Please dont close the browser...`, 'warning');
+			for(var i = 0; i < this.files.length; i++) {
+				this.uploadLoading = true;
+				this.$swal.fire(
+					{
+						type: "warning",
+						title: "Warning",
+						text: `Processing ${i + 1} of ${this.files.length} files. Please dont close the browser...`, 
+					}
+				);
+
 				const file = this.files[i];
 				const reader = new FileReader();
+				
+				reader.readAsText(file);
 				
 				reader.onload = async () => {
 					
 					let txtContent = reader.result.split("\n");
 					const song = await this.extractDetails(txtContent);
 					console.log(song);
-
+	
 					try {
 						await DB.collection("songs")
 						.doc()
 						.set(song);
+						console.log(song.title + " is added!");
 					}
 					catch(error) {
-						txtFilesNotUploaded++;
+						this.$swal.fire('Error', `${song.title} was not added due to an error. Please try again.`, 'error');
 					}
 				}
-				reader.readAsText(file);
+				this.uploadLoading = false;
 			}
-
-			if(txtFilesNotUploaded > 0) {
-				this.$swal.fire('warning', `There were ${txtFilesNotUploaded} songs not added due to error... Please try again`, 'warning');
+			
+			const response = await this.$swal.fire(
+				{
+					type: "success",
+					title: "Success",
+					text: `${this.files.length} songs were added...`, 
+					showCancelButton: false, 
+				}
+			);
+			
+			if(response) {
+				this.files = [];
+				this.$refs.dropzone.removeAllFiles();
+				this.uploadDialog = false;
 			}
-			else this.$swal.fire('success', `${this.files.length} songs has been added successfully!`, 'success');
-			this.uploadLoading = false;
 		}, 
 
 		extractDetails(arrayedTextFile) {
@@ -382,7 +402,7 @@ export default {
 				if( !isNaN(line.charAt(0)) && line.charAt(1) === ")") {
 					//remove the part of verse song indicator e.g: 1), 2), etc)
 					songPartTitle = "VERSE " + line.charAt(0);
-					newLine = line.split(line.charAt(0) + ") ", 1);
+					newLine = line.replace(`${line.charAt(0)}) `, "");
 					songPart.push(newLine + "\n");
 				}
 				else if(line.includes("V)")) {
