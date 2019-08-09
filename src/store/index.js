@@ -27,12 +27,6 @@ export default new Vuex.Store({
       console.log(songIndex);
       state.songs.splice(songIndex, 1);
       console.log(state.songs);
-    },
-    INCREMENT_FIELD_COUNT(state) {
-      state.fieldCount += 1;
-    },
-    DECREMENT_FIELD_COUNT(state) {
-      state.fieldCount -= 1;
     }
   },
   actions: {
@@ -44,6 +38,19 @@ export default new Vuex.Store({
           .set(payload)
           .then(() => {
             console.log(payload.title + "has been added!");
+          });
+      } catch (error) {
+        throw error;
+      }
+    },
+    async Edit_Song_Details(payload) {
+      try {
+        console.log(payload);
+        await DB.collection("songs")
+          .doc(payload.id)
+          .update(payload)
+          .then(() => {
+            console.lof(payload.title + " has been updated!");
           });
       } catch (error) {
         throw error;

@@ -117,6 +117,10 @@ import { saveAs } from 'file-saver'
 
 export default {
   name: "home",
+  mounted() {
+    //this.$store.dispatch("Get_All_Songs");
+    console.log(this.songsFromDB);
+  },
   components: {
     SongTextbox,
     songList
@@ -135,7 +139,7 @@ export default {
       let songs = this.$store.getters.GET_ALL_SONGS; 
       return songs.map((song) => {
         return {
-          text: song.title,
+          text: `${song.title} - ${song.artist}`,
           value: song
         };
       }); 
@@ -178,18 +182,11 @@ export default {
         for(let j = 0; j != song.lyrics.length; j++) {
           let songLyrics = list[i].lyrics[j];
           
-          let lyricPartHeader = "";
-          if(songLyrics.songPartNumber === undefined || songLyrics.songPartNumber === "") {
-            lyricPartHeader = songLyrics.songPart + ") ";
-          }
-          else {
-            lyricPartHeader = songLyrics.songPart + songLyrics.songPartNumber + ") ";
-          }
+          let lyricPartHeader = songLyrics.songPart + ") ";
           let lyricPartText = songLyrics.songPartText;
 
           content.push(lyricPartHeader);
           content.push(lyricPartText);
-          content.push("\n");
           content.push("\n");
         }
         content.push("\n");

@@ -10,7 +10,9 @@
 
         <router-link to="/">Home</router-link> |
         <router-link to="/instructions">Instructions</router-link> | 
-        <router-link to="/addSong">Add Song to Database</router-link>
+        <router-link to="/addSong">Add Song to Database</router-link> |
+        <!--<router-link to="/admin">Admin Previlages</router-link> -->
+
       </div>
       <router-view />
     </div>
@@ -25,7 +27,7 @@ export default {
       
     }
   },
-  mounted() {
+  created() {
     this.$store.dispatch("Get_All_Songs");
     console.log(this.$store.getters.GET_ALL_SONGS);
   }
