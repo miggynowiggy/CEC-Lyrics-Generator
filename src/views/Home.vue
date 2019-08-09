@@ -118,7 +118,8 @@ import { saveAs } from 'file-saver'
 export default {
   name: "home",
   mounted() {
-    this.$store.dispatch("Get_All_Songs");
+    //this.$store.dispatch("Get_All_Songs");
+    console.log(this.songsFromDB);
   },
   components: {
     SongTextbox,
