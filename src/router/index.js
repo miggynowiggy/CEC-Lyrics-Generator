@@ -27,10 +27,10 @@ export default new Router({
       name: "addSong",
       component: AddSong
     },
-    // {
-    //   path: "/admin",
-    //   name: "admin",
-    //   component: Admin
-    // }
+    {
+      path: "/admin",
+      name: "admin",
+      component: Admin
+    }
   ]
 });
