@@ -23,7 +23,7 @@ export default new Vuex.Store({
       state.songs.push(payload);
     },
     REMOVE_SONG_FROM_LIST(state, payload) {
-      const songIndex = state.songs.findIndex(song => song === payload);
+      const songIndex = state.songs.findIndex(song => song.title === payload);
       console.log(songIndex);
       state.songs.splice(songIndex, 1);
       console.log(state.songs);
