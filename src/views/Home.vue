@@ -12,22 +12,12 @@
       </v-layout>
 
       <v-layout row align-baseline justify-center mt-5 mb-5>
-        <v-flex xs10>
-          <v-btn color="secondary darken-2" :disabled="songList.length <= 0" @click="generateLyrics">
-            <div>GENERATE LYRICS LIST</div>
-            <v-icon right>save_alt</v-icon>
-          </v-btn>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row align-baseline justify-center mt-5>
         <v-flex xs6>
           <v-autocomplete
             v-model="selectedSong"
             :loading="loading"
             :items="songsFromDB"
             :filter="customFilter"
-            
             item-color="primary"
             cache-items
             hide-details
@@ -47,6 +37,15 @@
             label="Song"
             placeholder="Type in the Title or the Artist of your desired song..."
           ></v-text-field>-->
+        </v-flex>
+      </v-layout>
+
+       <v-layout row align-baseline justify-center mt-5 mb-5>
+        <v-flex xs10>
+          <v-btn color="secondary darken-2" :disabled="songList.length <= 0" @click="generateLyrics">
+            <div>GENERATE LYRICS LIST</div>
+            <v-icon right>save_alt</v-icon>
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-container>
