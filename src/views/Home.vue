@@ -27,8 +27,7 @@
             :loading="loading"
             :items="songsFromDB"
             :filter="customFilter"
-            :item-text="title"
-            :item-value="item"
+            
             item-color="primary"
             cache-items
             hide-details
@@ -81,8 +80,8 @@
                 wrap 
                 align-center 
                 justify-center 
-                v-for="lyrics in selectedSong.lyrics" 
-                :key="lyrics.songPart"
+                v-for="(lyrics, index) in selectedSong.lyrics" 
+                :key="index"
                 mb-3
               >
                 <v-flex xs12>
@@ -131,7 +130,7 @@ export default {
       search: "",
       loading: false, 
       dialog: false,
-      selectedSong: {},
+      selectedSong: "",
     }
   },
   computed: {
