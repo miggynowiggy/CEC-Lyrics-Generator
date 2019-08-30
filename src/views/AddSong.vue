@@ -410,12 +410,22 @@ export default {
 					newLine = line.replace("V) ", "");
 					songPart.push(newLine + "\n");
 				}
+				else if(line.includes("VERSE)")) {
+					songPartTitle = "VERSE";
+					newLine = line.replace("V) ", "");
+					songPart.push(newLine + "\n");
+				}
 				else if(line.includes("TALATA)")) {
 					songPartTitle = "TALATA";
 					newLine = line.replace("TALATA) ", "");
 					songPart.push(newLine + "\n");
 				}
-				else if(line.includes("C)" || "CHORUS)")) {
+				else if(line.includes("C)")) {
+					songPartTitle = "CHORUS";
+					newLine = line.replace("C) " || "CHORUS) ", "");
+					songPart.push(newLine + "\n");
+				}
+				else if(line.includes("CHORUS)")) {
 					songPartTitle = "CHORUS";
 					newLine = line.replace("C) " || "CHORUS) ", "");
 					songPart.push(newLine + "\n");

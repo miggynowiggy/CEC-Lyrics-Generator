@@ -139,7 +139,7 @@
                                 
                             <v-divider/>
 
-                            <v-layout row wrap align-center justify-center v-for="lyric in selectedSong.lyrics" :key="lyric" mt-5 pa-2>
+                            <v-layout row wrap align-center justify-center v-for="(lyric, index) in selectedSong.lyrics" :key="index" mt-5 pa-2>
                                 <v-flex xs12>
                                     <v-text-field
                                         v-model="lyric.songPart"
@@ -223,7 +223,7 @@ export default {
     },
     methods: {
         addLyricsPart() {
-			this.lyrics.push(
+			this.selectedSong.lyrics.push(
 				{
 					songPart: this.songPart + " " + this.songPartNumber,
 					songPartText: this.songPartText,
