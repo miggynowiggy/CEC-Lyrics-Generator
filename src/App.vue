@@ -11,7 +11,7 @@
         <router-link to="/">Home</router-link> |
         <router-link to="/instructions">Instructions</router-link> | 
         <router-link to="/addSong">Add Song to Database</router-link> |
-        <!--<router-link to="/admin">Admin Previlages</router-link>-->
+        <router-link to="/admin">Admin Previlages</router-link>
 
       </div>
       <router-view />
