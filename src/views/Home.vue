@@ -115,7 +115,7 @@ import { saveAs } from 'file-saver'
 
 export default {
   name: "home",
-  mounted() {
+  created() {
     //this.$store.dispatch("Get_All_Songs");
     console.log(this.songsFromDB);
   },
