@@ -21,9 +21,8 @@
             item-color="primary"
             cache-items
             hide-details
-            hide-no-data
             hide-selected
-            no-data-text
+            no-data-text="no song related to your search..."
             clearable
             placeholder="Enter the title or artist of the desired song."
             outlined
@@ -155,8 +154,11 @@ export default {
     },
     filteredList() {
       if(this.search === null || this.search === "" || this.search === undefined) return null;
-      return this.songsFromDB.filter(song => song.title >= this.search.toUpperCase()      
-        || song.artist >= this.search);
+      
+      return this.songsFromDB.filter(song => {
+        const songString = `${song.title.toLowerCase()} ${song.artist.toLowerCase()}`;
+        if(songString.includes(this.search.toLowerCase())) return song;
+      });
     },
   },
   methods: {
